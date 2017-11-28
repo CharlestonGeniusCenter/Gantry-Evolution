@@ -2,16 +2,23 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
-		<title>{% block title %}{% endblock %} - LXC Web Panel</title>
+		<title>{% block title %}{% endblock %} - Gantry</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<meta name="description" content="">
-		<meta name="author" content="">
+		<meta name="description" content="LXC Container Management">
+		<meta name="author" content="Gantry">
+
+		<link href="{{ url_for('static', filename='css/bootstrapSwitch.css') }}" rel="stylesheet">
 
 		<link href="{{ url_for('static', filename='css/foundation.css') }}" rel="stylesheet">
 		<link href="{{ url_for('static', filename='css/app.css') }}" rel="stylesheet">
-
 		<link href="{{ url_for('static', filename='css/font-awesome.css') }}" rel="stylesheet">
-		
+
+		<style type="text/css">
+			#wrap {min-height: 100%;height: auto !important;height: 100%;margin: 0 auto -60px;}
+			#wrap > .container {padding-top: 60px;}
+			.container {margin: 20px 0;}
+		</style>
+
 		<!--[if lt IE 9]>
 			<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 		<![endif]-->
@@ -20,25 +27,21 @@
 	</head>
 
 	<body>
-		<div id="wrap">
 
 		{% if session.logged_in %}
-			{% include "includes/nav.html" %}
+			{% include "includes/sidenav.html" %}
 		{% endif %}
 
-		
 			<div class="container">
 				<div class="row">
-					{% if session.logged_in %}
-						{% include "includes/aside.html" %}
-					{% endif %}
-
 					{% block content %}
 						{% with messages = get_flashed_messages(with_categories=true) %}
 							{% if messages %}
 								{% for category, message in messages %}
-									<div class="alert alert-{{ category }}">
-										<button type="button" class="close" data-dismiss="alert">&times;</button>
+									<div class="callout {{ category }}" data-closable>
+										<button class="close-button" aria-label="Dismiss callout" type="button" data-close>
+											<span aria-hidden="true">&times;</span>
+										</button>
 										{{ message }}
 									</div>
 								{% endfor %}
@@ -48,14 +51,11 @@
 				</div>
 			</div>
 
-			<div id="push"></div>
-		</div>
+<div class="row" id="wrap">
 
-		<div id="footer">
-			<div class="container">
-				<p class="muted credit"><small>Gantry {% if 'logged_in' in session %} - <a href="{{ url_for('about') }}" class="muted">MIT License</a>{% endif %}<small></p>
-			</div>
-		</div>
+
+<!-- close off the off canvas nav -->
+
 
 		<!-- javascript
 		================================================== -->
@@ -65,15 +65,71 @@
 		<script src="{{ url_for('static', filename='js/vendor/what-input.js') }}"></script>
 		<script src="{{ url_for('static', filename='js/vendor/foundation.js') }}"></script>
 		<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+
+		<!-- SVG Dashboard Gauges Below -->
+		<script src="{{ url_for('static', filename='js/vendor/snap.svg-min.js') }}"></script>
+		<script type="text/javascript">
+			$(function() {
+
+				var polar_to_cartesian, svg_circle_arc_path, animate_arc;
+
+				polar_to_cartesian = function(cx, cy, radius, angle) {
+				var radians;
+				radians = (angle - 90) * Math.PI / 180.0;
+				return [Math.round((cx + (radius * Math.cos(radians))) * 100) / 100, Math.round((cy + (radius * Math.sin(radians))) * 100) / 100];
+				};
+
+				svg_circle_arc_path = function(x, y, radius, start_angle, end_angle) {
+				var end_xy, start_xy;
+				start_xy = polar_to_cartesian(x, y, radius, end_angle);
+				end_xy = polar_to_cartesian(x, y, radius, start_angle);
+				return "M " + start_xy[0] + " " + start_xy[1] + " A " + radius + " " + radius + " 0 0 0 " + end_xy[0] + " " + end_xy[1];
+				};
+
+				animate_arc = function(ratio, svg, perc) {
+				var arc, center, radius, startx, starty;
+				arc = svg.path('');
+				center = 500;
+				radius = 450;
+				startx = 0;
+				starty = 450;
+				return Snap.animate(0, ratio, (function(val) {
+					var path;
+					arc.remove();
+					path = svg_circle_arc_path(500, 500, 450, -90, val * 180.0 - 90);
+					arc = svg.path(path);
+					arc.attr({
+					class: 'data-arc'
+					});
+					perc.text(Math.round(val * 100) + '%');
+				}), Math.round(2000 * ratio), mina.easeinout);
+				};
+
+				$('.metric').each(function() {
+				var ratio, svg, perc;
+				ratio = $(this).data('ratio');
+				svg = Snap($(this).find('svg')[0]);
+				perc = $(this).find('text.percentage');
+				animate_arc(ratio, svg, perc);
+				});
+			});
+		</script>
+
+		<!-- <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script> -->
+		<!--<script src="{{ url_for('static', filename='js/bootstrapSwitch.js') }}"></script> -->
+		<script src="{{ url_for('static', filename='js/jqBootstrapValidation.js') }}"></script>
+		<!-- think we can live w/o slider - need to analyze input bootstrapvalidation line 81
+		<script src="{{ url_for('static', filename='js/html5slider.js') }}"></script>
 		<script>
 				$(function() {
-						$(".alert").not('.dont-hide').alert().delay(5000).slideUp();
+						$(".alert").not('.dont-hide').alert().delay(10000).slideUp();
 						$("#home-btn").on('click',function(){
 								$('#home-load').fadeIn();
 						});
 						$("input").not("[type=submit]").jqBootstrapValidation();
 				});
-		</script>
+		</script> -->
+
 		{% block script %}{% endblock %}
 	</body>
 </html>

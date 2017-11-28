@@ -1,78 +1,79 @@
 {% extends "layout.html" %}
 {% block title %}Networking{% endblock %}
 {% block content %}
-<div class="span9">
+<div class="row">
+	<div class="small-12 medium-10 medium-centered large-10 large-centered columns">
+		<div class="primary callout" data-closable>
+			<button class="close-button" aria-label="Close alert" type="button" data-close>
+				<span aria-hidden="true">&times;</span>
+			</button>
+			<i class="fa fa-info-circle fa-lg"> </i> - If you change these settings, don't forget to change containers addresses!
+		</div>
+	</div>
+</div>
+
+<div class="small-12 medium-12 large-12 columns">
 	{{ super() }}
-	<form id="config" class="form-horizontal" action="{{ url_for('lxc_net') }}" method="post">
-		<h3 class="head head-networking">LXC Network</h3>
-		<div class="control-group switch-networking">
-			<div class="controls" style="margin-left: 5px;">
-				<div class="switch" data-on-label="<i class='icon-ok icon-white'></i>" data-off-label="<i class='icon-remove icon-white'></i>" data-on="success" data-off="danger">
-					<input type="checkbox" name="use" value="true" {% if cfg.use == 'true' %}checked{% endif %}{% if running != [] %} disabled{% endif %} />
+	<div class="row">
+		<div class="small-12 medium-8 medium-centered large-6 large-centered columns">
+			<h3>LXC Network Settings</h3>
+		</div>
+	</div>
+	<form id="config" action="{{ url_for('lxc_net') }}" method="post">
+		<div class="row">
+			<div class="small-12 medium-8 medium-centered large-6 large-centered columns">
+				<label>Modify Settings</label><br>
+				<div class="switch-networking">
+						<div class="switch" data-on-label="<i class='fa fa-check'></i>" data-off-label="<i class='fa fa-times'></i>" data-on="success" data-off="danger">
+							<input type="checkbox" name="use" value="true" {% if cfg.use == 'true' %}checked{% endif %}{% if running != [] %} disabled{% endif %} />
+						</div>
 				</div>
 			</div>
 		</div>
-		
-		{% if running != [] %}<h4 class="text-error">Please, stop all containers before restarting lxc-net.</h4><br />{% endif %}
 
-	
-		<div class="lxc-net">			
-			<div class="control-group">
-				<label class="control-label" for="inputBridge">Bridge name</label>
-				<div class="controls">
-					<input pattern="[a-zA-Z0-9_-]+" type="text" id="inputBridge" name="bridge" value="{{ cfg.bridge }}"{% if running != [] %} disabled{% endif %}>
-					<span class="help-inline"><small>(e.g lxcbr0)</small></span>
-				</div>
-			</div>
+		{% if running != [] %}<h4 class="text-error">Please, stop all containers before restarting lxc-net.</h4><br>{% endif %}
 
-			<div class="control-group">
-				<label class="control-label" for="inputGateway">IP Address</label>
-				<div class="controls">
+		<div class="row">
+			<div class="small-12 medium-8 medium-centered large-6 large-centered columns">
+				<div class="lxc-net">
+						<label class="control-label" for="inputBridge">Bridge name &nbsp;<small>(e.g. lxcbr0)</small>
+							<input pattern="[a-zA-Z0-9_-]+" type="text" id="inputBridge" name="bridge" value="{{ cfg.bridge }}"{% if running != [] %} disabled{% endif %}>
+						</label>
+
+
+				<label for="inputGateway">IP Address <small>(e.g 10.0.3.1)</small>
 					<input pattern="(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)" type="text" id="inputGateway" name="address" value="{{ cfg.address }}"{% if running != [] %} disabled{% endif %}>
-					<span class="help-inline"><small>(e.g 10.0.3.1)</small></span>
-				</div>
-			</div>
+				</label>
 
-			<div class="control-group">
-				<label class="control-label" for="inputNetmask">Netmask</label>
-				<div class="controls">
+
+
+				<label for="inputNetmask">Netmask <small>(e.g 255.255.255.0)</small>
 					<input pattern="(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)" type="text" id="inputNetmask" name="netmask" value="{{ cfg.netmask }}"{% if running != [] %} disabled{% endif %}>
-					<span class="help-inline"><small>(e.g 255.255.255.0)</small></span>
-				</div>
-			</div>
+				</label>
 
-			<div class="control-group">
-				<label class="control-label" for="inputNetwork">Network</label>
-				<div class="controls">
+				<label for="inputNetwork">Network <small>(e.g 10.0.3.0/24)</small>
 					<input pattern="(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(?:/\d{1,2}|)" type="text" id="inputNetwork" name="network" value="{{ cfg.network }}"{% if running != [] %} disabled{% endif %}>
-					<span class="help-inline"><small>(e.g 10.0.3.0/24)</small></span>
-				</div>
-			</div>
+				</label>
 
-			<div class="control-group">
-				<label class="control-label" for="inputDHCPRange">DHCP Range</label>
-				<div class="controls">
+
+
+				<label for="inputDHCPRange">DHCP Range <small>(e.g 10.0.3.2,10.0.3.254)</small>
 					<input pattern="(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\,(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)" type="text" id="inputDHCPRange" name="range" value="{{ cfg.range }}"{% if running != [] %} disabled{% endif %}>
-					<span class="help-inline"><small>(e.g 10.0.3.2,10.0.3.254)</small></span>
-				</div>
-			</div>
+				</label>
 
-			<div class="control-group">
-				<label class="control-label" for="inputDHCPMax">DHCP Max</label>
-				<div class="controls">
+
+				<label for="inputDHCPMax">DHCP Max <small>(e.g 253)</small>
 					<input pattern="(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)" type="text" id="inputDHCPMax" name="max" value="{{ cfg.max }}"{% if running != [] %} disabled{% endif %}>
-					<span class="help-inline"><small>(e.g 253)</small></span>
-				</div>
-			</div>
+				</label>
+
 		</div>
-		<div class="control-group">
-			<div class="controls">
-				<button class="btn btn-primary btn-success" name="submit" value="apply" type="submit"{% if running != [] %} disabled{% endif %}><i class="icon-ok icon-white"></i> Apply</button>
-				<span class="help-inline"><small>If you change these settings, don't forget to change containers addresses!</small></span>
-			</div>
-		</div>
+
+
+				<button class="primary button" name="submit" value="apply" type="submit"{% if running != [] %} disabled{% endif %}>Apply</button>
+
 	</form>
-	
+
+</div>
 </div>
 {% endblock %}
 {% block script %}

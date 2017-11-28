@@ -2,7 +2,7 @@
 # for compatibility with LXC 0.8 and 0.9
 # on Ubuntu 12.04/12.10/13.04
 
-# Author: Engility TechWorks
+# Author: Gantry
 # Contact: -
 
 # The MIT License (MIT)
@@ -106,7 +106,7 @@ def home():
             for container in listx[status]:
                 settings = gantry.get_container_settings(container)
                 if running:
-                    settings['ipv4'] = lxc.ip_address(container, running) 
+                    settings['ipv4'] = lxc.ip_address(container, running)
                 containers_by_status.append({
                     'name': container,
                     'memusg': gantry.memory_usage(container),
@@ -642,8 +642,8 @@ def action():
             elif action == 'reboot' and name == 'host':
                 if session['su'] != 'Yes':
                     return abort(403)
-                msg = '\v*** LXC Web Panel *** \
-                        \nReboot from web panel'
+                msg = '\v*** LXC Container Manager *** \
+                        \nReboot from container manager'
                 try:
                     lxc._run('/sbin/shutdown -r now \'%s\'' % msg)
                     flash(u'System will now restart!', 'success')

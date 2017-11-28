@@ -2,11 +2,10 @@
 # for compatibility with LXC 0.8 and 0.9
 # on Ubuntu 12.04/12.10/13.04
 
-# Author: Elie Deloumeau
-# Contact: elie@deloumeau.fr
+# Author: TechWorks
+# Contact:
 
 # The MIT License (MIT)
-# Copyright (c) 2013 Elie Deloumeau
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -15,7 +14,7 @@
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
 
-# The above copyright notice and this permission notice shall be included in
+# This permission notice shall be included in
 # all copies or substantial portions of the Software.
 
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -126,7 +125,7 @@ def ip_address(container, assume_running=False):
             return _run('lxc-info -n %s -iH' % container)
     except:
         pass
-    return '' 
+    return ''
 
 
 def ls():

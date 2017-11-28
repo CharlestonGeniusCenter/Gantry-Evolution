@@ -2,7 +2,7 @@
 # for compatibility with LXC 0.8 and 0.9
 # on Ubuntu 12.04/12.10/13.04
 
-# Author: Engility TechWorks
+# Author: Gantry
 # Contact: -
 
 # The MIT License (MIT)
@@ -256,7 +256,7 @@ def check_version():
     f = open('version')
     current = float(f.read())
     f.close()
-    latest = float(urlopen('http://engility-techworks.github.com/Grantry/version').read())
+    latest = float(urlopen('http://gantry.github.com/Grantry/version').read())
     return {'current': current,
             'latest': latest}
 

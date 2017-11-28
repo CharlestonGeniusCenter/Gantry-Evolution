@@ -1,0 +1,41 @@
+<div class="off-canvas-wrapper">
+	<div class="off-canvas-wrapper-inner" data-off-canvas-wrapper>
+		<div class="off-canvas position-left reveal-for-large" id="my-info" data-off-canvas data-position="left">
+			<div class="row column">
+				<img class="side-logo float-center" src="/static/img/gantry-sidenav-logo.png"  alt="Gantry"/>
+				<ul class="vertical menu accordion-menu" data-accordion-menu>
+				  <li{% if request.path=="/" or request.path=="/home" %} class="active"{% endif %}><a href="{{ url_for('home') }}" id="home-btn">Overview<i class="icon-refresh hide" id="home-load"></i></a></li>
+					<li>
+					<a href="#">Containers</a>
+					{% if containers != [] %}
+					<ul class="menu vertical">
+						{% for c in containers %}
+							<li{% if request.path=='/'+ c +'/edit' %} class="active"{% endif %}><a href="{{ url_for('edit',container=c) }}">{{c}}</a></li>
+						{% endfor %}
+					</ul>{% endif %}
+				  </li>
+				  <li>
+					<a href="#">Settings</a>
+					{% if session.su == 'Yes' %}
+					<ul class="menu vertical">
+						<li{% if request.path=="/settings/lxc-net" %} class="active"{% endif %}><a href="{{ url_for('lxc_net') }}">Network</a></li>
+						<li{% if request.path=="/checkconfig" %} class="active"{% endif %}><a href="{{ url_for('checkconfig') }}">Configure</a></li>
+						<li{% if request.path=="/gantry/users" %} class="active"{% endif %}><a href="{{ url_for('gantry_users') }}">Users</a></li>
+					</ul>{% endif %}
+				  </li>
+				  <li{% if request.path=="about" %} class="active"{% endif %}><a href="{{ url_for('about') }}">About</a></li>
+				  <hr>
+				  <li><a href="{{ url_for('logout') }}" class="navbar-link">Logout <small>[{% if session.name and session.name != 'None' %}{{ session.name }}{% else %}{{ session.username }}{% endif %}]</small></a></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+		<div class="off-canvas-content" data-off-canvas-content>
+			<div class="title-bar hide-for-large gantry-nav-blue">
+				<div class="title-bar-left">
+					<button class="menu-icon" type="button" data-open="my-info"></button>
+					<span class="title-bar-title gantry-nav-blue">Gantry</span>
+				</div>
+			</div>
+		</div>

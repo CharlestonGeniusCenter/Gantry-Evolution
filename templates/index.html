@@ -1,70 +1,110 @@
-{% set td = {'running':'success','frozen':'info','stopped':'important'} %}
-{% set tr = {'running':'success','frozen':'info','stopped':'error'} %}
-{% set disabled = {'running':'success','frozen':'info','stopped':'important'} %}
+{% set td = {'running':'success','frozen':'primary','stopped':'alert'} %}
+{% set tr = {'running':'success','frozen':'primary','stopped':'alert'} %}
+{% set disabled = {'running':'success','frozen':'primary','stopped':'alert'} %}
 {% extends "layout.html" %}
 {% block title %}Overview{% endblock %}
 {% block content %}
-<div class="span9">
+<div class="small-12 medium-12 large-12 columns">
 	{{ super() }}
-	{% if session.su == 'Yes' %}<p class="pull-right" style="margin:10px 10px 0 0;"><a class="btn btn-small btn-danger" data-toggle="modal" data-target="#reboot"><i class="icon-off icon-white"></i> Reboot</a></p>
-	{% if containers != [] %}<p class="pull-right" style="margin:10px 10px 0 0;"><a class="btn btn-small btn-inverse" data-toggle="modal" data-target="#cloneCT"> <i class="icon-repeat icon-white"></i> Clone <abbr title="Container">CT</abbr></a></p>{% endif %}
-	<p class="pull-right" style="margin:10px 10px 0 0;"><a class="btn btn-small btn-success" data-toggle="modal" data-target="#createCT"><i class="icon-plus-sign icon-white"></i> Create <abbr title="Container">CT</abbr></a></p>{% endif %}
-
-	<div class="hero-unit">
-		{% if dist == 'Unknown' %}<div class="alert alert-error">Gantry Container Manager is optimized for Ubuntu 12.10 !</div>{% endif %}
+	{% if session.su == 'Yes' %}
+	<h3>{{ dist }} <small>[host]</small> <p class="right"><a class="alert small button" data-open="reboot">Reboot Hypervisor</a></p></h3>
+	{% if dist == 'Unknown' %}<div class="callout alert">Gantry is optimized for Ubuntu 12.10 !</div>{% endif %}
+	<a href="https:/gantry.github.io/Gantry/" target="_blank"><span class="label info hide" id="version"><i class="fa fa-info-circle"></i> New version is out ! (<span id="vernumber"></span>)</span></a>
+	<div class="callout">
 		<div class="row">
-			<div class="span3" style="margin-left:20px;">
-				<h3>{{ dist }} (host)</h3>
-				<p>CPU usage : <span id="cpu-usage" class="hide"></span></p>
+			<div class="small-12 medium-12 large-12 columns">
+				<h6 class="subheader">System Uptime: <span id="uptime"></span></h6>
+			</div>
+			<div class="small-12 medium-4 large-4 columns">
+				<div class="metric blocked" id="cpu" data-ratio=".51">
+					<svg viewBox="0 0 1000 600">
+						<path d="M 950 500 A 450 450 0 0 0 50 500"></path>
+						<text class='percentage' text-anchor="middle" alignment-baseline="middle" x="500" y="300" font-size="140" font-weight="bold">0%</text>
+						<text class='title' text-anchor="middle" alignment-baseline="middle" x="500" y="450" font-size="90" font-weight="normal">CPU Usage</text>
+					 </svg>
+				</div>
+
+				<!-- Below commented out because IDs and function need mapped to above gauge
+				<p>CPU usage : <span id="cpu-usage"></span></p>
 				<div class="progress" style="width:250px;">
 					<div class="bar" id="cpu-usage-bar" style="width:0%;"></div>
 				</div>
-				<p>Memory usage : <span id="memory-usage" class="hide"></span></p>
+				Above commented out because IDs and function need mapped to above gauge -->
+
+			</div>
+			<div class="small-12 medium-4 large-4 columns">
+				<div class="metric participation" data-ratio=".72">
+						<svg viewBox="0 0 1000 600">
+							<path d="M 950 500 A 450 450 0 0 0 50 500"></path>
+							<text class='percentage' text-anchor="middle" alignment-baseline="middle" x="500" y="300" font-size="140" font-weight="bold">0%</text>
+							<text class='title' text-anchor="middle" alignment-baseline="middle" x="500" y="450" font-size="90" font-weight="normal">Memory Usage</text>
+							<text class='title' text-anchor="middle" alignment-baseline="middle" x="500" y="550" font-size="40" font-weight="normal"><span id="memory-usage">{{ refreshMemoryHost }}</span></text>
+						</svg>
+					</div>
+
+				<!-- Below commented out because IDs and function need mapped to above gauge
+				<p>Memory usage : <span id="memory-usage"></span></p>
 				<div class="progress" style="width:250px;">
 					<div class="bar" id="memory-usage-bar" style="width: 0%;"></div>
-					<abbr title="Cached memory"><div class="bar bar-success" id="memory-cache-usage-bar" style="width: 0%;"></div></abbr>
+					<abbr title="Cached memory"><div id="memory-cache-usage-bar" style="width: 0%;"></div></abbr>
 				</div>
+				Above commented out because IDs and function need mapped to above gauge -->
+
 			</div>
-			<div class="span3" style="margin-top:29px; margin-left:20px;">
-				<p>Disk usage : <span id="disk-usage" class="hide"></span></p>
+			<div class="small-12 medium-4 large-4 columns">
+				<div class="metric completion" data-ratio=".27">
+						<svg viewBox="0 0 1000 600">
+							<path d="M 950 500 A 450 450 0 0 0 50 500"></path>
+							<text class='percentage' text-anchor="middle" alignment-baseline="middle" x="500" y="300" font-size="140" font-weight="bold">0%</text>
+							<text class='title' text-anchor="middle" alignment-baseline="middle" x="500" y="450" font-size="90" font-weight="normal">Disk Usage</text>
+							<text class='title' text-anchor="middle" alignment-baseline="middle" x="500" y="550" font-size="40" font-weight="normal"><span id="disk-usage"></span></text>
+						</svg>
+				</div>
+
+				<!-- Below commented out because IDs and function need mapped to above gauge
+				<p>Disk usage : <span id="disk-usage"></span></p>
 				<div class="progress" style="width:250px;">
 					<div class="bar" id="disk-usage-bar" style="width: 0%;"></div>
 				</div>
-				<p>Uptime : <span id="uptime" class="hide"></span></p>
+				Above commented out because IDs and function need mapped to above gauge -->
+
 			</div>
 		</div>
-		<a href="http://lxc-webpanel.github.io/" target="_blank"><span class="label label-info hide" id="version" style="position:relative; float:right; bottom:0; margin:-20px -23px 0 0;"><i class="icon-info-sign icon-white"></i> New version is out ! (<span id="vernumber"></span>)</span></a>
 	</div>
-	<table class="table table-bordered">
+
+	<a class="success button" data-open="createCT">Create Container</a>{% endif %}
+	{% if containers != [] %}<a class="secondary button" data-open="cloneCT">Clone Container</a>{% endif %}
+
+	<table class="table">
 		<thead>
 			<tr>
-				<th>Status</th>
 				<th>Name</th>
+				<th>Status</th>
 				<th>Hostname</th>
 				<th>IP Address</th>
 				<th>Mem. usage</th>
 				<th>Actions</th>
 			</tr>
-		</thead>	
+		</thead>
 		{% for status in containers_all %}
 			<tbody>
 				{% for container in status.containers %}
-					<tr class="{{ tr[status.status] }}">
-						{% if loop.first %}<td><a href="{{ url_for('edit',container=container.name) }}" title="Click to edit {{container.name}}">{{container.name}}</a></td>{% endif %}
+					<tr>
+						<td><a href="{{ url_for('edit',container=container.name) }}" title="Click to edit {{container.name}}">{{container.name}}</a></td>
+						{% if loop.first %}<td rowspan="{{ status.containers|count }}"><span class="label {{ td[status.status] }}">{{ status.status|capitalize }}</span></td>{% endif %}
+
 						<td>{{container.settings.utsname}}</td>
-						<td rowspan="{{ status.containers|count }}"><span class="label label-{{ td[status.status] }}">{{ status.status|capitalize }}</span></td>
 						<td>{% if container.settings.flags == 'up' %}{% if container.settings.ipv4 != '' %}{{container.settings.ipv4}}{% else %}Undefined{% endif %}{% elif container.settings.flags == 'down' %}Link Down{% endif %}</td>
 						<td id="{{container.name}}">{{ render_memory_wrapper(container.memusg) }}</td>
 						<td>
-							<div class="btn-toolbar" style="margin:8px 0;">
-								<div class="btn-group">
+
 									{% set start_action = {'stopped':'start','frozen':'unfreeze'} %}
-									<a class="btn btn-small{% if status.status == 'running' %} disabled{% endif %}"{% if status.status == 'stopped' or status.status == 'frozen' %} href="{{ url_for('action', name=container.name, action=start_action[status.status], token=session.token) }}"{% endif %}><i class="icon-play"></i> Start</a>
-									<a class="btn btn-small{% if status.status == 'stopped' %} disabled{% endif %}"{% if status.status == 'running' or status.status == 'frozen' %} href="{{ url_for('action', name=container.name, action='stop', token=session.token) }}"{% endif %}><i class="icon-stop"></i> Stop</a>
-									<a class="btn btn-small{% if status.status == 'frozen' or status.status == 'stopped' %} disabled{% endif %}"{% if status.status == 'running' %} href="{{ url_for('action', name=container.name, action='freeze', token=session.token) }}"{% endif %}><i class="icon-pause"></i> Freeze</a>
-								</div>
-								{% if session.su == 'Yes' %}<a class="pull-right close destroy" data-container-name="{{container.name}}" style="margin-top:4px;"><i class="icon-remove-sign"></i></a>{% endif %}
-							</div>
+									<a class="tiny success button {% if status.status == 'running' %} disabled{% endif %}"{% if status.status == 'stopped' or status.status == 'frozen' %} href="{{ url_for('action', name=container.name, action=start_action[status.status], token=session.token) }}"{% endif %}><i class="fa fa-play"></i></a>
+									<a class="tiny alert button {% if status.status == 'stopped' %} disabled{% endif %}"{% if status.status == 'running' or status.status == 'frozen' %} href="{{ url_for('action', name=container.name, action='stop', token=session.token) }}"{% endif %}><i class="fa fa-stop"></i></a>
+									<a class="tiny primary button {% if status.status == 'frozen' or status.status == 'stopped' %} disabled{% endif %}"{% if status.status == 'running' %} href="{{ url_for('action', name=container.name, action='freeze', token=session.token) }}"{% endif %}><i class="fa fa-pause"></i></a>
+
+								{% if session.su == 'Yes' %}<a class="tiny alert hollow button float-right destroy" data-open="destroyCT" data-container-name="{{container.name}}"><i class="fa fa-trash fa-lg"></i></a>{% endif %}
+
 						</td>
 					</tr>
 				{% endfor %}
@@ -84,17 +124,18 @@
 
 {% endblock %}
 
+<!-- try to block in content -->
+
 {% macro memory_color(value) -%}{% if value != 0 %}{% if 0 <= value <= 511 %}success{% elif 512 <= value < 980 %}warning{% else %}important{% endif %}{% endif %}{%- endmacro %}
 {% macro render_memory_wrapper(value) -%}
 	{% if value != 0 %}<span class="label label-{{ memory_color(value) }}">{{ value }} MB</span>{% endif %}
 {%- endmacro %}
 
 {% block script %}
-<script src="{{ url_for('static', filename='js/bootstrapSwitch.js') }}"></script>
 <script type="text/javascript">
 			function refreshMemoryHost(){
 				$.getJSON($SCRIPT_ROOT + '/_refresh_memory_host', function(data) {
-					$('#memory-usage').text(data.used +' / '+ data.total +' MB').fadeIn();
+					$('#memory-usage').text(data.used +' / '+ data.total +' MB').show();
 					$('#memory-usage-bar').css({'width':data.percent+'%'});
 					$('#memory-cache-usage-bar').css({'width':data.percent_cached+'%'});
 				});
@@ -102,21 +143,21 @@
 
 			function refreshCPUHost(){
 				$.get($SCRIPT_ROOT + '/_refresh_cpu_host', function(data) {
-					$('#cpu-usage').text(data +'%').fadeIn();
-					$('#cpu-usage-bar').css({'width':data +'%'});
+					$('#cpu-usage').text(data +'%').show();
+					$('#cpu-usage-bar').css(data-ratio:data +'%');
 				});
 			}
 
 			function refreshDiskHost(){
 				$.getJSON($SCRIPT_ROOT + '/_refresh_disk_host', function(data) {
-					$('#disk-usage').text(data.used +' ('+ data.free +' free)').fadeIn();
-					$('#disk-usage-bar').css({'width':data.percent});
+					$('#disk-usage').text(data.used +' ('+ data.free +' free)').show();
+					$('#disk-usage-bar').css({data.percent});
 				});
 			}
 
 			function refreshUptimeHost(){
 				$.getJSON($SCRIPT_ROOT + '/_refresh_uptime_host', function(data) {
-					$('#uptime').text(data.day +' day(s) '+ data.time).fadeIn();
+					$('#uptime').text(data.day +' day(s) '+ data.time).show();
 				});
 			}
 
@@ -138,7 +179,7 @@
 					else if ('512' <= value && value < '1024')
 						return 'warning';
 					else
-						return 'important';
+						return 'alert';
 			}
 
 			function check_version(){
@@ -183,7 +224,7 @@
 				});
 
 				// Create CT
-				$('#advancedcreate').click(function(e){ e.preventDefault(); $('#advancedcreatediv').slideToggle(); });
+				//$('#advancedcreate').click(function(e){ e.preventDefault(); $('#advancedcreatediv').slideToggle(); });
 
 				// Clone CT
 				$('#advancedclone').click(function(e){ e.preventDefault(); $('#advancedclonediv').slideToggle(); });
@@ -193,7 +234,7 @@
 						var _lvm = $(this).closest('.advanced-wrapper').find('.lvm');
 						var _zfs = $(this).closest('.advanced-wrapper').find('.zfs');
 						var _directory = $(this).closest('.advanced-wrapper').find('.directory');
-						
+
 						if( _val == 'lvm'){
 							_lvm.slideDown();
 							_directory.slideUp();

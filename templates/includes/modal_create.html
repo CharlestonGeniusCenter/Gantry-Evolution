@@ -1,83 +1,74 @@
-<div id="createCT" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="createCTLabel" aria-hidden="true">
-	<form method="post" action="{{ url_for('create_container') }}" style="margin:0;">
-		<div class="modal-header">
-			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-			<h3 id="createCTLabel">Create container</h3>
+<div class="reveal" id="createCT" data-reveal data-close-on-click="true" data-animation-in="slide-in-up" data-animation-out="slide-out-down" tabindex="-1" role="dialog" aria-labelledby="createCTLabel" aria-hidden="true">
+	<form method="post" action="{{ url_for('create_container') }}">
+		<div class="row">
+			<div class="small-12 medium-12 large-12 columns">
+				<button class="close-button" data-close aria-label="Close reveal" type="button">
+		    		<span aria-hidden="true">&times;</span>
+		  	</button>
+				<h3 id="createCTLabel">Create container</h3>
+			</div>
 		</div>
-		<div class="modal-body">
-			<div class="control-group">
-				<div class="controls input-prepend">
-					<span class="add-on"><i class="icon-folder-open"></i></span>
-					<input id="inputName" type="text" pattern="(?!^containers$)[a-zA-Z0-9_-]+" placeholder="Name" name="name">
-				</div>
 
-				<div class="controls input-prepend pull-right" style="margin-top: -40px;">
-					<span class="add-on"><i class="icon-download-alt"></i></span>
+		<div class="row">
+			<div class="small-12 medium-12 large-12 columns">
+				<label>Container Name
+					<input id="inputName" type="text" pattern="(?!^containers$)[a-zA-Z0-9_-]+" placeholder="Name" name="name">
+				</label>
+				<label> Operating System
 					<select id="selectTemplate" name="template">
 						{% for template in templates %}<option value="{{ template }}" {% if template == 'ubuntu' %}selected{% endif %}>{{ template }}</option>{% endfor %}
 					</select>
-				</div>
-			</div>
-			<button id ="advancedcreate" class="btn btn-small">Advanced options</button>
-			<div id="advancedcreatediv" class="advanced-wrapper hide">
-				<br />
-				<div class="control-group pull-right">
-					<label class="control-label" for="inputCommand">LXC Container configuration</label>
-					<div class="controls input-prepend">
-						<span class="add-on"><i class="icon-wrench"></i></span>
+				</label>
+
+					<label for="inputCommand">LXC Container configuration
 						<input type="text" id="inputCommand" name="command" placeholder="Container command">
-					</div>
-				</div>
-				<div class="control-group">
-					<div class="controls input-prepend">
-						<label class="control-label" for="backingstorecreate">Backing store*</label>
-						<span class="add-on"><i class="icon-hdd"></i></span>
+					</label>
+					<label class="control-label" for="backingstorecreate">Backing store <i class="fa fa-info-circle" data-toggle="backingstore-dropdown"></i>
 						<select id="backingstorecreate" class="backingstore" name="backingstore">
 								<option value="default" selected>Default</option>
 								<option value="directory">Directory</option>
 								<option value="lvm">LVM</option>
 								<option value="zfs">ZFS</option>
 						</select>
+					</label>
+					<div class="dropdown-pane top" id="backingstore-dropdown" data-dropdown data-hover="true" data-hover-pane="true">
+	  				<small>By default it is 'none', which is a simple directory tree under /var/lib/lxc/&lt;name&gt;/rootfs</small>
 					</div>
-					<span class="help-inline"><small>*By default it is 'none', which is a simple directory tree under /var/lib/lxc/&lt;name&gt;/rootfs</small></span>
-				</div>
-				<div class="control-group hide directory">
-					<label class="control-label" for="inputDirectory">Directory</label>
-					<div class="controls input-prepend">
-						<span class="add-on"><i class="icon-folder-close"></i></span>
-						<input type="text" id="inputDirectory" name="dir" placeholder="Directory">
+
+					<div class="hide directory">
+						<label class="control-label" for="inputDirectory">Directory
+							<input type="text" id="inputDirectory" name="dir" placeholder="Directory">
+						</label>
 					</div>
-				</div>
-				<div class="control-group hide lvm">
-					<div class="controls">
-						<label class="control-label" for="inputLV">LV Name</label>
-						<input type="text" id="inputLV" name="lvname" placeholder="LV Name">
-						<label class="control-label" for="inputVG">VG Name</label>
-						<input type="text" id="inputVG" name="vgname" placeholder="VG Name">
-						<label class="control-label" for="inputFS">File system</label>
-						<input type="text" id="inputFS" name="fstype" placeholder="ext4">
-						<label class="control-label" for="inputFSSize">Size</label>
-						<input type="text" id="inputFSSize" name="fssize" placeholder="500M">
+
+					<div class="hide lvm">
+						<label class="control-label" for="inputLV">LV Name
+							<input type="text" id="inputLV" name="lvname" placeholder="LV Name">
+						</label>
+						<label class="control-label" for="inputVG">VG Name
+							<input type="text" id="inputVG" name="vgname" placeholder="VG Name">
+						</label>
+						<label class="control-label" for="inputFS">File system
+							<input type="text" id="inputFS" name="fstype" placeholder="ext4">
+						</label>
+						<label class="control-label" for="inputFSSize">Size
+							<input type="text" id="inputFSSize" name="fssize" placeholder="500M">
+						</label>
 					</div>
-				</div>
-				<div class="control-group hide zfs">
-					<div class="controls">
-						<label class="control-label" for="zpoolname">zpool Name</label>
-						<input type="text" id="inputZFS" name="zpoolname" placeholder="lxc"> 
+
+					<div class="hide zfs">
+						<label class="control-label" for="zpoolname">zpool Name
+							<input type="text" id="inputZFS" name="zpoolname" placeholder="lxc">
+						</label>
 					</div>
-				</div>
-			</div>
-		</div>
-		<div class="modal-footer">
-			<div class="buttons-modal-footer">
-				<button class="btn btn-small" data-dismiss="modal" aria-hidden="true">Close</button>
-				<button type="submit" class="btn btn-success modalbutton"><i class="icon-plus-sign icon-white"></i> Create</button>
-			</div>
-			<div class="loader-modal-footer hide">
-				<div class="progress progress-striped active">
-					<div class="bar" style="width: 100%;"></div>
-				</div>
-				<p class="text-center">This could take a while...</p>
+
+	</div>
+</div>
+
+		<div class="row">
+			<div class="small-12 medium-12 large-12 columns">
+				<button type="submit" class="success button modalbutton">Save</button>
+				<a href="#" class="clear primary button" data-close aria-label="Close reveal" aria-hidden="true">Close</a>
 			</div>
 		</div>
 	</form>
